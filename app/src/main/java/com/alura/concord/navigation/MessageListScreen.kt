@@ -1,5 +1,9 @@
 package com.alura.concord.navigation
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -10,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.alura.concord.extensions.showLog
+import com.alura.concord.extensions.showMessage
 import com.alura.concord.ui.chat.MessageListViewModel
 import com.alura.concord.ui.chat.MessageScreen
 import com.alura.concord.ui.components.ModalBottomSheetFile
@@ -66,9 +71,24 @@ fun NavGraphBuilder.messageListScreen(
                     })
             }
 
+            val pickMedia = rememberLauncherForActivityResult(
+                ActivityResultContracts.PickVisualMedia()
+            ) { uri ->
+                if (uri != null) {
+                    context.showMessage("Selected URI: $uri")
+                } else {
+                    Log.d("PhotoPicker", "No media selected")
+                }
+            }
+
             if (uiState.showBottomSheetFile) {
                 ModalBottomSheetFile(
                     onSelectPhoto = {
+                        pickMedia.launch(
+                            PickVisualMediaRequest(
+                                ActivityResultContracts.PickVisualMedia.ImageAndVideo
+                            )
+                        )
                         viewModelMessage.setShowBottomSheetFile(false)
                     },
                     onSelectFile = {
