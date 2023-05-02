@@ -75,7 +75,7 @@ fun NavGraphBuilder.messageListScreen(
                 ActivityResultContracts.PickVisualMedia()
             ) { uri ->
                 if (uri != null) {
-                    context.showMessage("Selected URI: $uri")
+                    viewModelMessage.loadMediaInScreen(uri.toString())
                 } else {
                     Log.d("PhotoPicker", "No media selected")
                 }
