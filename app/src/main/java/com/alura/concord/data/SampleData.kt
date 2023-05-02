@@ -45,7 +45,7 @@ val messageListSample = mutableListOf(
         content = LoremIpsum(13).values.first(),
         author = Author.USER,
         date = getRandomDate(),
-        mediaLink = "/storage/emulated/0/Download/imagem.jpg"
+        mediaLink = "/storage/self/primary/Android/data/com.alura.concord/Emoji 6 Jelly Bean.png"
     ),
     Message(
         id = 3L,
@@ -53,7 +53,7 @@ val messageListSample = mutableListOf(
         content = LoremIpsum(1).values.first(),
         author = Author.USER,
         date = getRandomDate(),
-        mediaLink = "content://media/external/images/media/94"
+        mediaLink = "/data/data/com.alura.concord/files/aumenta o som.png"
     ),
     Message(
         id = 3L,
