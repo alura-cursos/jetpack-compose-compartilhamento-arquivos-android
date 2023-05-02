@@ -1,5 +1,6 @@
 package com.alura.concord.navigation
 
+import android.provider.OpenableColumns
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -81,6 +82,27 @@ fun NavGraphBuilder.messageListScreen(
                 }
             }
 
+            val pickFile = rememberLauncherForActivityResult(
+                ActivityResultContracts.OpenDocument()
+            ) { uri ->
+                if (uri != null) {
+
+                    val name = context.contentResolver.query(uri, null, null, null, null)
+                        .use { cursor ->
+                            val nameIndex = cursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                            cursor?.moveToFirst()
+                            nameIndex?.let { cursor?.getString(it) }
+                        }
+
+
+                    uiState.onMessageValueChange(name.toString())
+                    viewModelMessage.loadMediaInScreen(uri.toString())
+                    viewModelMessage.sendMessage()
+                } else {
+                    Log.d("FilePicker", "No media selected")
+                }
+            }
+
             if (uiState.showBottomSheetFile) {
                 ModalBottomSheetFile(
                     onSelectPhoto = {
@@ -92,6 +114,7 @@ fun NavGraphBuilder.messageListScreen(
                         viewModelMessage.setShowBottomSheetFile(false)
                     },
                     onSelectFile = {
+                        pickFile.launch(arrayOf("*/*"))
                         viewModelMessage.setShowBottomSheetFile(false)
                     }, onBack = {
                         viewModelMessage.setShowBottomSheetFile(false)
