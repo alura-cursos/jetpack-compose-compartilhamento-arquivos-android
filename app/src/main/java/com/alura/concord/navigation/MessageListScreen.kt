@@ -1,5 +1,6 @@
 package com.alura.concord.navigation
 
+import android.content.Intent
 import android.provider.OpenableColumns
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -76,6 +77,10 @@ fun NavGraphBuilder.messageListScreen(
                 ActivityResultContracts.PickVisualMedia()
             ) { uri ->
                 if (uri != null) {
+                    val contentResolver = context.contentResolver
+                    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    contentResolver.takePersistableUriPermission(uri, takeFlags)
+
                     viewModelMessage.loadMediaInScreen(uri.toString())
                 } else {
                     Log.d("PhotoPicker", "No media selected")
@@ -86,6 +91,10 @@ fun NavGraphBuilder.messageListScreen(
                 ActivityResultContracts.OpenDocument()
             ) { uri ->
                 if (uri != null) {
+
+                    val contentResolver = context.contentResolver
+                    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    contentResolver.takePersistableUriPermission(uri, takeFlags)
 
                     val name = context.contentResolver.query(uri, null, null, null, null)
                         .use { cursor ->
