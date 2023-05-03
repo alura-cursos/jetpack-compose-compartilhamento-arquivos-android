@@ -60,7 +60,7 @@ fun NavGraphBuilder.messageListScreen(
             )
 
             val requestPermissionLauncher =
-                rememberLauncherForActivityResult (
+                rememberLauncherForActivityResult(
                     ActivityResultContracts.RequestPermission()
                 ) { isGranted: Boolean ->
                     if (isGranted) {
@@ -76,18 +76,20 @@ fun NavGraphBuilder.messageListScreen(
                 val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     Manifest.permission.READ_MEDIA_IMAGES
                 } else {
-                   Manifest.permission.READ_EXTERNAL_STORAGE
+                    Manifest.permission.READ_EXTERNAL_STORAGE
                 }
 
                 requestPermissionLauncher.launch(permission)
 
-                getAllImages(context)
-
                 val stickerList = mutableStateListOf<String>()
 
-                context.getExternalFilesDir("stickers")?.listFiles()?.forEach { file ->
-                    stickerList.add(file.path)
-                }
+                getAllImages(context, onLoadImages = { images ->
+                    stickerList.addAll(images)
+                })
+
+//                context.getExternalFilesDir("stickers")?.listFiles()?.forEach { file ->
+//                    stickerList.add(file.path)
+//                }
 
                 ModalBottomSheetSticker(
                     stickerList = stickerList,
@@ -160,8 +162,13 @@ fun NavGraphBuilder.messageListScreen(
     }
 }
 
-private fun getAllImages(context: Context) {
-    val projection = null
+private fun getAllImages(context: Context, onLoadImages: (List<String>) -> Unit) {
+    val images = mutableListOf<String>()
+
+    val projection = arrayOf(
+        MediaStore.Images.Media.DISPLAY_NAME,
+        MediaStore.Images.Media.DATA,
+    )
     val selection = null
     val selectionArgs = null
     val sortOrder = null
@@ -174,12 +181,17 @@ private fun getAllImages(context: Context) {
         sortOrder
     )?.use { cursor ->
 
-        context.showLog("Total de imagens: ${cursor.count}")
-
         while (cursor.moveToNext()) {
-            // Use an ID column from the projection to get
-            // a URI representing the media item itself.
+            val nameIndex: Int = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
+            val name: String = cursor.getString(nameIndex)
+
+            val pathIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+            val path = cursor.getString(pathIndex)
+
+            context.showLog("Nome: $name e caminho: $path")
+            images.add(path)
         }
+        onLoadImages(images)
     }
 }
 
