@@ -56,6 +56,18 @@ fun NavGraphBuilder.messageListScreen(
                 }
             )
 
+            val requestPermissionLauncher =
+                rememberLauncherForActivityResult (
+                    ActivityResultContracts.RequestPermission()
+                ) { isGranted: Boolean ->
+                    if (isGranted) {
+                        context.showMessage("Permissão concedida")
+                    } else {
+                        context.showMessage("Permissão NÃO concedida")
+                    }
+                }
+
+
             if (uiState.showBottomSheetSticker) {
 
                 val projection = null
