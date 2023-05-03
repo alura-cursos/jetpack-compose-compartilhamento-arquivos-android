@@ -82,7 +82,7 @@ private fun BottomSheetStickers(
                         .fillMaxSize()
                         .padding(8.dp)
                         .clickable {
-//                            onSelectedSticker()
+                            onSelectedSticker(Uri.parse(item))
                         }
                 ) {
 
