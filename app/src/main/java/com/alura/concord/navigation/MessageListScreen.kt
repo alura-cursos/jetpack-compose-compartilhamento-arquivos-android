@@ -1,6 +1,9 @@
 package com.alura.concord.navigation
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
@@ -70,26 +73,15 @@ fun NavGraphBuilder.messageListScreen(
 
             if (uiState.showBottomSheetSticker) {
 
-                val projection = null
-                val selection = null
-                val selectionArgs = null
-                val sortOrder = null
-
-                context.contentResolver.query(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    projection,
-                    selection,
-                    selectionArgs,
-                    sortOrder
-                )?.use { cursor ->
-
-                    context.showLog("Total de imagens: ${cursor.count}")
-
-                    while (cursor.moveToNext()) {
-                        // Use an ID column from the projection to get
-                        // a URI representing the media item itself.
-                    }
+                val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Manifest.permission.READ_MEDIA_IMAGES
+                } else {
+                   Manifest.permission.READ_EXTERNAL_STORAGE
                 }
+
+                requestPermissionLauncher.launch(permission)
+
+                getAllImages(context)
 
                 val stickerList = mutableStateListOf<String>()
 
@@ -164,6 +156,29 @@ fun NavGraphBuilder.messageListScreen(
                         viewModelMessage.setShowBottomSheetFile(false)
                     })
             }
+        }
+    }
+}
+
+private fun getAllImages(context: Context) {
+    val projection = null
+    val selection = null
+    val selectionArgs = null
+    val sortOrder = null
+
+    context.contentResolver.query(
+        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        projection,
+        selection,
+        selectionArgs,
+        sortOrder
+    )?.use { cursor ->
+
+        context.showLog("Total de imagens: ${cursor.count}")
+
+        while (cursor.moveToNext()) {
+            // Use an ID column from the projection to get
+            // a URI representing the media item itself.
         }
     }
 }
