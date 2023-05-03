@@ -1,6 +1,7 @@
 package com.alura.concord.navigation
 
 import android.content.Intent
+import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -56,6 +57,28 @@ fun NavGraphBuilder.messageListScreen(
             )
 
             if (uiState.showBottomSheetSticker) {
+
+                val projection = null
+                val selection = null
+                val selectionArgs = null
+                val sortOrder = null
+
+                context.contentResolver.query(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    sortOrder
+                )?.use { cursor ->
+
+                    context.showLog("Total de imagens: ${cursor.count}")
+
+                    while (cursor.moveToNext()) {
+                        // Use an ID column from the projection to get
+                        // a URI representing the media item itself.
+                    }
+                }
+
                 val stickerList = mutableStateListOf<String>()
 
                 context.getExternalFilesDir("stickers")?.listFiles()?.forEach { file ->
