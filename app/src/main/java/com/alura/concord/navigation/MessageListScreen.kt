@@ -21,6 +21,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.alura.concord.extensions.showLog
 import com.alura.concord.extensions.showMessage
+import com.alura.concord.media.getAllImages
+import com.alura.concord.media.getNameByUri
 import com.alura.concord.ui.chat.MessageListViewModel
 import com.alura.concord.ui.chat.MessageScreen
 import com.alura.concord.ui.components.ModalBottomSheetFile
@@ -83,7 +85,7 @@ fun NavGraphBuilder.messageListScreen(
 
                 val stickerList = mutableStateListOf<String>()
 
-                getAllImages(context, onLoadImages = { images ->
+                context.getAllImages(onLoadImages = { images ->
                     stickerList.addAll(images)
                 })
 
@@ -125,13 +127,7 @@ fun NavGraphBuilder.messageListScreen(
                     val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION
                     contentResolver.takePersistableUriPermission(uri, takeFlags)
 
-                    val name = context.contentResolver.query(uri, null, null, null, null)
-                        .use { cursor ->
-                            val nameIndex = cursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                            cursor?.moveToFirst()
-                            nameIndex?.let { cursor?.getString(it) }
-                        }
-
+                    val name = context.getNameByUri(uri)
 
                     uiState.onMessageValueChange(name.toString())
                     viewModelMessage.loadMediaInScreen(uri.toString())
@@ -159,40 +155,6 @@ fun NavGraphBuilder.messageListScreen(
                     })
             }
         }
-    }
-}
-
-private fun getAllImages(context: Context, onLoadImages: (List<String>) -> Unit) {
-    val images = mutableListOf<String>()
-
-    val projection = arrayOf(
-        MediaStore.Images.Media.DISPLAY_NAME,
-        MediaStore.Images.Media.DATA,
-    )
-    val selection = "${MediaStore.Images.Media.DATA} LIKE '%/Download/stickers/%' " +
-            "AND ${MediaStore.Images.Media.SIZE} < ?"
-    val selectionArgs = arrayOf("70000")
-    val sortOrder = "${MediaStore.Images.Media.DISPLAY_NAME} DESC"
-
-    context.contentResolver.query(
-        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-        projection,
-        selection,
-        selectionArgs,
-        sortOrder
-    )?.use { cursor ->
-
-        while (cursor.moveToNext()) {
-            val nameIndex: Int = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
-            val name: String = cursor.getString(nameIndex)
-
-            val pathIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-            val path = cursor.getString(pathIndex)
-
-            context.showLog("Nome: $name e caminho: $path")
-            images.add(path)
-        }
-        onLoadImages(images)
     }
 }
 
