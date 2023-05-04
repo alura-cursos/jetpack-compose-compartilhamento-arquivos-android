@@ -41,6 +41,6 @@ fun Context.getNameByUri(uri: Uri): String? {
         .use { cursor ->
             val nameIndex = cursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME)
             cursor?.moveToFirst()
-            nameIndex?.let { cursor?.getString(it) }
+            nameIndex?.let { cursor.getString(it) }
         }
 }
