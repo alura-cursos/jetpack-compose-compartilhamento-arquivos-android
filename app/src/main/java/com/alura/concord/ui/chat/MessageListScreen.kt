@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alura.concord.R
 import com.alura.concord.data.Author
+import com.alura.concord.data.DownloadableContent
+import com.alura.concord.data.Message
 import com.alura.concord.data.messageListSample
 import com.alura.concord.ui.components.*
 
@@ -47,6 +49,7 @@ fun MessageScreen(
     onShowSelectorStickers: () -> Unit = {},
     onDeselectMedia: () -> Unit = {},
     onBack: () -> Unit = {},
+    onContentDownload: (Message) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -69,7 +72,12 @@ fun MessageScreen(
                 items(state.messages.reversed(), contentType = { it.author }) { it ->
                     when (it.author) {
                         Author.OTHER -> {
-                            MessageItemOther(it)
+                            MessageItemOther(
+                                it,
+                                onContentDownload = {
+                                    onContentDownload(it)
+                                },
+                            )
                         }
 
                         Author.USER -> {
@@ -101,7 +109,11 @@ private fun SelectedMediaContainer(
     state: MessageListUiState,
     onDeselectMedia: () -> Unit,
 ) {
-    Divider(Modifier.height(0.4.dp).alpha(0.5f), color = MaterialTheme.colorScheme.outline)
+    Divider(
+        Modifier
+            .height(0.4.dp)
+            .alpha(0.5f), color = MaterialTheme.colorScheme.outline
+    )
     Box(
         contentAlignment = Alignment.BottomEnd,
         modifier = Modifier
@@ -109,7 +121,10 @@ private fun SelectedMediaContainer(
             .background(MaterialTheme.colorScheme.onPrimaryContainer),
     ) {
         AsyncImage(
-            modifier = Modifier.size(150.dp).padding(8.dp).clip(RoundedCornerShape(5)),
+            modifier = Modifier
+                .size(150.dp)
+                .padding(8.dp)
+                .clip(RoundedCornerShape(5)),
             imageUrl = state.mediaInSelection
         )
         IconButton(
@@ -125,7 +140,8 @@ private fun SelectedMediaContainer(
                 .background(
                     Color.Black,
                     CircleShape
-                ).size(22.dp),
+                )
+                .size(22.dp),
         ) {
             Icon(
                 Icons.Default.Close,
@@ -145,9 +161,11 @@ fun AppBarChatScreen(
     TopAppBar(
         navigationIcon = {
             Row(
-                modifier = Modifier.fillMaxHeight().clickable {
-                    onBackClick()
-                },
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .clickable {
+                        onBackClick()
+                    },
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
@@ -168,7 +186,6 @@ fun AppBarChatScreen(
         },
         title = {
             Text(text = state.ownerName, fontWeight = FontWeight.Medium)
-
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -308,6 +325,7 @@ private fun EntryTextBar(
 fun ChatScreenPreview() {
     MessageScreen(
         MessageListUiState(
+            ownerName = "Alberto",
             messages = messageListSample,
         )
     )

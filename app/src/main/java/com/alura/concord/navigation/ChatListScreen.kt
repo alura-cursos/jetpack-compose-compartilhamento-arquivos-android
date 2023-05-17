@@ -3,6 +3,7 @@ package com.alura.concord.navigation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,6 +24,10 @@ fun NavGraphBuilder.chatListScreen(
         val chatViewModel = hiltViewModel<ChatListViewModel>()
         val chatState by chatViewModel.uiState.collectAsState()
 
+//        LaunchedEffect(Unit) {
+//            onOpenChat(1)
+//        }
+
         if (chatState.isLoading) {
             Box(Modifier.fillMaxSize()) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -38,3 +43,5 @@ fun NavGraphBuilder.chatListScreen(
         }
     }
 }
+
+
