@@ -72,7 +72,10 @@ fun NavGraphBuilder.messageListScreen(
                 },
                 onBack = {
                     onBack()
-                }
+                },
+                onContentDownload = { message ->
+                    viewModelMessage.simulatedDownload(message)
+                },
             )
 
 
