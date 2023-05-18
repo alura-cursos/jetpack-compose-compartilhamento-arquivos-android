@@ -1,9 +1,10 @@
 package com.alura.concord.ui.chat
 
-import com.alura.concord.data.Message
+import com.alura.concord.data.FileInDownload
+import com.alura.concord.data.MessageWithFile
 
 data class MessageListUiState(
-    val messages: List<Message> = emptyList(),
+    val messages: List<MessageWithFile> = emptyList(),
     val messageValue: String = "",
     val onMessageValueChange: (String) -> Unit = {},
     val onMediaInSelectionChange: (String) -> Unit = {},
@@ -16,5 +17,8 @@ data class MessageListUiState(
     val hasImagePermission: Boolean = false,
     val showBottomSheetSticker: Boolean = false,
     val showBottomSheetFile: Boolean = false,
+    val showBottomShareSheet: Boolean = false,
     val onMakeContentDownload: (Boolean) -> Unit = {},
+    val selectedMessage: MessageWithFile = MessageWithFile(),
+    val fileInDownload: FileInDownload? = null,
 )

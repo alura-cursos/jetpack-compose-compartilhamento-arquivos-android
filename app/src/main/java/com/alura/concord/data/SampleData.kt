@@ -1,37 +1,39 @@
 package com.alura.concord.data
 
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
+import com.alura.concord.database.entities.Author
+import com.alura.concord.database.entities.MessageEntity
 import com.alura.concord.util.getRandomDate
 
-val messageListSample = mutableListOf(
-    Message(
+val messageEntityListSamples = mutableListOf(
+    MessageEntity(
         id = 3L,
         chatId = 3L,
         content = "Olá",
         author = Author.USER,
         date = getRandomDate(),
     ),
-    Message(
+    MessageEntity(
         id = 3L,
         chatId = 3L,
         content = LoremIpsum(2).values.first(),
         author = Author.OTHER,
         date = getRandomDate()
     ),
-    Message(
+    MessageEntity(
         id = 3L,
         chatId = 3L,
         content = LoremIpsum(13).values.first(),
         author = Author.USER,
         date = getRandomDate(),
     ),
-    Message(
+    MessageEntity(
         id = 3L,
         chatId = 3L,
         content = LoremIpsum(14).values.last(),
         author = Author.OTHER
     ),
-    Message(
+    MessageEntity(
         id = 3L,
         chatId = 3L,
         content = LoremIpsum(8).values.first(),
@@ -39,7 +41,7 @@ val messageListSample = mutableListOf(
         date = getRandomDate(),
         mediaLink = "/data/user/0/com.alura.concord/app_temImages/94f077ed-a81f-4a74-ac5b-6e44130e80b1"
     ),
-    Message(
+    MessageEntity(
         id = 3L,
         chatId = 3L,
         content = LoremIpsum(13).values.first(),
@@ -47,7 +49,7 @@ val messageListSample = mutableListOf(
         date = getRandomDate(),
         mediaLink = "/storage/self/primary/Android/data/com.alura.concord/Emoji 6 Jelly Bean.png"
     ),
-    Message(
+    MessageEntity(
         id = 3L,
         chatId = 3L,
         content = LoremIpsum(1).values.first(),
@@ -55,7 +57,7 @@ val messageListSample = mutableListOf(
         date = getRandomDate(),
         mediaLink = "/data/data/com.alura.concord/files/aumenta o som.png"
     ),
-    Message(
+    MessageEntity(
         id = 3L,
         chatId = 3L,
         content = LoremIpsum(7).values.first(),

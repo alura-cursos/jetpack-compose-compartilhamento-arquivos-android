@@ -1,7 +1,6 @@
 package com.alura.concord.extensions
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 
 fun Context.showMessage(message: String, longTime: Boolean = false) {
@@ -14,8 +13,4 @@ fun Context.showMessage(message: String, longTime: Boolean = false) {
             Toast.LENGTH_SHORT
         }
     ).show()
-}
-
-fun Context.showLog(message: String) {
-    Log.i("files", message)
 }

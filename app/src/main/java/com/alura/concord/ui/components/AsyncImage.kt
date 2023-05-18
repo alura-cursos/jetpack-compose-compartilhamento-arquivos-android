@@ -21,7 +21,7 @@ fun AsyncImage(
         contentScale = contentScale,
         model = ImageRequest.Builder(LocalContext.current).data(imageUrl).build(),
         placeholder = painterResource(R.drawable.image_place_holder),
-        error = painterResource(R.drawable.image_place_holder),
+        error = painterResource(R.drawable.ic_document),
         contentDescription = description,
     )
 }

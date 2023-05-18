@@ -22,6 +22,7 @@ import com.alura.concord.media.verifyPermission
 import com.alura.concord.ui.chat.MessageListViewModel
 import com.alura.concord.ui.chat.MessageScreen
 import com.alura.concord.ui.components.ModalBottomSheetFile
+import com.alura.concord.ui.components.ModalBottomShareSheet
 import com.alura.concord.ui.components.ModalBottomSheetSticker
 
 internal const val messageChatRoute = "messages"
@@ -38,19 +39,19 @@ fun NavGraphBuilder.messageListScreen(
             val uiState by viewModelMessage.uiState.collectAsState()
             val context = LocalContext.current
 
-            val requestPermissionLauncher =
-                rememberLauncherForActivityResult(
-                    ActivityResultContracts.RequestPermission()
-                ) { isGranted: Boolean ->
-                    if (isGranted) {
-                        viewModelMessage.setShowBottomSheetSticker(true)
-                    } else {
-                        context.showMessage(
-                            "Permissão não concedida, não será possivel acessar os stickers sem ela",
-                            true
-                        )
-                    }
+            val requestPermissionLauncher = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted: Boolean ->
+                if (isGranted) {
+                    viewModelMessage.setShowBottomSheetSticker(true)
+                } else {
+                    context.showMessage(
+                        "Permissão não concedida, não será possivel acessar os stickers sem ela",
+                        true
+                    )
                 }
+            }
+
 
             MessageScreen(
                 state = uiState,
@@ -74,10 +75,18 @@ fun NavGraphBuilder.messageListScreen(
                     onBack()
                 },
                 onContentDownload = { message ->
-                    viewModelMessage.simulatedDownload(message)
+                    if (viewModelMessage.downloadInProgress()) {
+                        viewModelMessage.startDownload(message)
+                    } else {
+                        context.showMessage(
+                            "Aguarde o download terminar para baixar outro arquivo", true
+                        )
+                    }
                 },
+                onShowFileOptions = { selectedMessage ->
+                    viewModelMessage.setShowFileOptions(selectedMessage.id, true)
+                }
             )
-
 
             if (uiState.showBottomSheetSticker) {
 
@@ -93,9 +102,11 @@ fun NavGraphBuilder.messageListScreen(
                         viewModelMessage.setShowBottomSheetSticker(false)
                         viewModelMessage.loadMediaInScreen(path = it.toString())
                         viewModelMessage.sendMessage()
-                    }, onBack = {
+                    },
+                    onBack = {
                         viewModelMessage.setShowBottomSheetSticker(false)
-                    })
+                    }
+                )
             }
 
             val pickMedia = rememberLauncherForActivityResult(
@@ -103,7 +114,6 @@ fun NavGraphBuilder.messageListScreen(
             ) { uri ->
                 if (uri != null) {
                     context.persistUriPermission(uri)
-
                     viewModelMessage.loadMediaInScreen(uri.toString())
                 } else {
                     Log.d("PhotoPicker", "No media selected")
@@ -139,18 +149,38 @@ fun NavGraphBuilder.messageListScreen(
                     onSelectFile = {
                         pickFile.launch(arrayOf("*/*"))
                         viewModelMessage.setShowBottomSheetFile(false)
-                    }, onBack = {
+                    },
+                    onBack = {
                         viewModelMessage.setShowBottomSheetFile(false)
-                    })
+                    }
+                )
+            }
+
+
+            if (uiState.showBottomShareSheet) {
+                val mediaToOpen = uiState.selectedMessage.mediaLink
+
+                ModalBottomShareSheet(
+                    onOpenWith = {
+
+                    },
+                    onShare = {
+
+                    },
+                    onSave = {
+
+                    },
+                    onBack = {
+                        viewModelMessage.setShowBottomShareSheet(false)
+                    }
+                )
             }
         }
     }
 }
 
-
 internal fun NavHostController.navigateToMessageScreen(
-    chatId: Long,
-    navOptions: NavOptions? = null
+    chatId: Long, navOptions: NavOptions? = null
 ) {
     navigate("$messageChatRoute/$chatId", navOptions)
 }

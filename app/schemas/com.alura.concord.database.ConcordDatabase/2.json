@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "42d4b427b8ee99c2d93b807530007efd",
+    "identityHash": "edebcc735495e6131e851b4503734944",
     "entities": [
       {
         "tableName": "Chat",
@@ -38,7 +38,7 @@
       },
       {
         "tableName": "Message",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `chatId` INTEGER NOT NULL, `content` TEXT NOT NULL, `author` TEXT NOT NULL, `date` TEXT NOT NULL, `mediaLink` TEXT NOT NULL, `idDownloadableContent` INTEGER DEFAULT 0)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `chatId` INTEGER NOT NULL, `content` TEXT NOT NULL, `author` TEXT NOT NULL, `date` TEXT NOT NULL, `mediaLink` TEXT NOT NULL, `idDownloadableFile` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -77,11 +77,10 @@
             "notNull": true
           },
           {
-            "fieldPath": "idDownloadableContent",
-            "columnName": "idDownloadableContent",
+            "fieldPath": "idDownloadableFile",
+            "columnName": "idDownloadableFile",
             "affinity": "INTEGER",
-            "notNull": false,
-            "defaultValue": "0"
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -94,13 +93,19 @@
         "foreignKeys": []
       },
       {
-        "tableName": "DownloadableContent",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `url` TEXT NOT NULL, `size` INTEGER NOT NULL)",
+        "tableName": "DownloadableFile",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, `size` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -129,7 +134,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '42d4b427b8ee99c2d93b807530007efd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'edebcc735495e6131e851b4503734944')"
     ]
   }
 }

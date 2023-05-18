@@ -34,10 +34,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alura.concord.R
-import com.alura.concord.data.Author
-import com.alura.concord.data.DownloadableContent
-import com.alura.concord.data.Message
-import com.alura.concord.data.messageListSample
+import com.alura.concord.database.entities.Author
+import com.alura.concord.data.MessageWithFile
+import com.alura.concord.data.messageEntityListSamples
+import com.alura.concord.database.entities.toMessageFile
 import com.alura.concord.ui.components.*
 
 @Composable
@@ -49,7 +49,8 @@ fun MessageScreen(
     onShowSelectorStickers: () -> Unit = {},
     onDeselectMedia: () -> Unit = {},
     onBack: () -> Unit = {},
-    onContentDownload: (Message) -> Unit = {},
+    onContentDownload: (MessageWithFile) -> Unit = {},
+    onShowFileOptions: (MessageWithFile) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -69,19 +70,23 @@ fun MessageScreen(
                     .padding(horizontal = 16.dp)
                     .weight(8f), reverseLayout = true
             ) {
-                items(state.messages.reversed(), contentType = { it.author }) { it ->
-                    when (it.author) {
+                items(state.messages.reversed(), contentType = { it.author }) { message ->
+
+                    when (message.author) {
                         Author.OTHER -> {
                             MessageItemOther(
-                                it,
+                                message = message,
                                 onContentDownload = {
-                                    onContentDownload(it)
+                                    onContentDownload(message)
+                                },
+                                onShowFileOptions = {
+                                    onShowFileOptions(message)
                                 },
                             )
                         }
 
                         Author.USER -> {
-                            MessageItemUser(it)
+                            MessageItemUser(message)
                         }
                     }
 
@@ -326,7 +331,7 @@ fun ChatScreenPreview() {
     MessageScreen(
         MessageListUiState(
             ownerName = "Alberto",
-            messages = messageListSample,
+            messages = messageEntityListSamples.map { it.toMessageFile() },
         )
     )
 }
