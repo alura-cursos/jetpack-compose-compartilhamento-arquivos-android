@@ -3,6 +3,7 @@ package com.alura.concord.media
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
@@ -48,16 +49,20 @@ suspend fun Context.saveOnInternalStorage(
 
 
 fun Context.openWith(mediaLink: String) {
+    val file = File(mediaLink)
+
+    val fileExtension = MimeTypeMap.getFileExtensionFromUrl(Uri.encode(file.path))
+    val fileMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension) ?: "*/*"
 
     val contentUri: Uri = FileProvider.getUriForFile(
         this,
         "com.alura.concord.fileprovider",
-        File(mediaLink)
+        file
     )
 
     val shareIntent = Intent().apply {
         action = Intent.ACTION_VIEW
-        setDataAndType(contentUri, "image/*")
+        setDataAndType(contentUri, fileMimeType)
         flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
     }
     startActivity(Intent.createChooser(shareIntent, "Abrir com"))
