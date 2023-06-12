@@ -17,8 +17,8 @@ object DownloadService {
         val request = Request.Builder().url(url).build()
 
         withContext(IO) {
-            client.newCall(request).execute().use { response ->
-                response.body?.byteStream()?.use { fileData: InputStream ->
+            client.newCall(request).execute().let { response ->
+                response.body?.byteStream()?.let { fileData: InputStream ->
                     onFinishedDownload(fileData)
                 }
             }
