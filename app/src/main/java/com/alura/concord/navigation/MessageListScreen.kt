@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -19,11 +20,13 @@ import com.alura.concord.media.getNameByUri
 import com.alura.concord.media.imagePermission
 import com.alura.concord.media.persistUriPermission
 import com.alura.concord.media.verifyPermission
+import com.alura.concord.network.DownloadService.makeDownloadByURL
 import com.alura.concord.ui.chat.MessageListViewModel
 import com.alura.concord.ui.chat.MessageScreen
 import com.alura.concord.ui.components.ModalBottomSheetFile
 import com.alura.concord.ui.components.ModalBottomShareSheet
 import com.alura.concord.ui.components.ModalBottomSheetSticker
+import kotlinx.coroutines.launch
 
 internal const val messageChatRoute = "messages"
 internal const val messageChatIdArgument = "chatId"
@@ -52,6 +55,7 @@ fun NavGraphBuilder.messageListScreen(
                 }
             }
 
+            val scope = rememberCoroutineScope()
 
             MessageScreen(
                 state = uiState,
@@ -75,6 +79,13 @@ fun NavGraphBuilder.messageListScreen(
                     onBack()
                 },
                 onContentDownload = { message ->
+
+                    val urlTeste =
+                        "https://github.com/alura-cursos/jetpack-compose-armazenamento-arquivos-android/raw/arquivos/images/tiramisu.png"
+
+                    scope.launch {
+                        makeDownloadByURL(urlTeste, context)
+                    }
                     if (viewModelMessage.downloadInProgress()) {
                         viewModelMessage.startDownload(message)
                     } else {
