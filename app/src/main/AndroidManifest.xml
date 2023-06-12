@@ -32,6 +32,16 @@
             </intent-filter>
         </activity>
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.alura.concord.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
     </application>
 
 </manifest>

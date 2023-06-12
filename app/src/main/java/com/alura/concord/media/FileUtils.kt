@@ -3,11 +3,14 @@ package com.alura.concord.media
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.core.content.FileProvider
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import okio.use
 import java.io.File
 import java.io.InputStream
+import java.security.AccessController.getContext
+
 
 fun Long.formatReadableFileSize(): String {
     val size = this
@@ -44,12 +47,19 @@ suspend fun Context.saveOnInternalStorage(
 }
 
 
-fun Context.openWith(mediaLink: String){
+fun Context.openWith(mediaLink: String) {
+
+    val contentUri: Uri = FileProvider.getUriForFile(
+        this,
+        "com.alura.concord.fileprovider",
+        File(mediaLink)
+    )
+
     val shareIntent = Intent().apply {
         action = Intent.ACTION_VIEW
-        putExtra(Intent.EXTRA_STREAM, Uri.parse(mediaLink))
-        type = "image/*"
+        setDataAndType(contentUri, "image/*")
+        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
     }
-    startActivity(Intent.createChooser(shareIntent,"Abrir com"))
+    startActivity(Intent.createChooser(shareIntent, "Abrir com"))
 
 }
