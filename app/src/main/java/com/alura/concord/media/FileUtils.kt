@@ -31,7 +31,8 @@ fun Long.formatReadableFileSize(): String {
 suspend fun Context.saveOnInternalStorage(
     inputStream: InputStream,
     fileName: String,
-    onSuccess: (String) -> Unit
+    onSuccess: (String) -> Unit,
+    onFailure: () -> Unit
 ) {
     val path = getExternalFilesDir("temp")
     val newFile = File(path, fileName)
@@ -43,6 +44,8 @@ suspend fun Context.saveOnInternalStorage(
 
         if (newFile.exists()) {
             onSuccess(newFile.path)
+        }else{
+            onFailure()
         }
     }
 }
