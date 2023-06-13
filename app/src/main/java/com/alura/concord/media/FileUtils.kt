@@ -10,7 +10,6 @@ import kotlinx.coroutines.withContext
 import okio.use
 import java.io.File
 import java.io.InputStream
-import java.security.AccessController.getContext
 
 
 fun Long.formatReadableFileSize(): String {
@@ -54,14 +53,8 @@ suspend fun Context.saveOnInternalStorage(
 fun Context.openWith(mediaLink: String) {
     val file = File(mediaLink)
 
-    val fileExtension = MimeTypeMap.getFileExtensionFromUrl(Uri.encode(file.path))
-    val fileMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension) ?: "*/*"
-
-    val contentUri: Uri = FileProvider.getUriForFile(
-        this,
-        "com.alura.concord.fileprovider",
-        file
-    )
+    val fileMimeType = file.getMimeType()
+    val contentUri: Uri = getFileUriProvider(file)
 
     val shareIntent = Intent().apply {
         action = Intent.ACTION_VIEW
@@ -70,4 +63,34 @@ fun Context.openWith(mediaLink: String) {
     }
     startActivity(Intent.createChooser(shareIntent, "Abrir com"))
 
+}
+
+
+fun Context.shareFile(mediaLink: String) {
+    val file = File(mediaLink)
+
+    val fileMimeType = file.getMimeType()
+    val contentUri: Uri = getFileUriProvider(file)
+
+    val shareIntent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_STREAM, contentUri)
+        type = fileMimeType
+        flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+    }
+    startActivity(Intent.createChooser(shareIntent, "Compartilhar"))
+
+}
+
+private fun Context.getFileUriProvider(file: File): Uri {
+    return FileProvider.getUriForFile(
+        this,
+        "com.alura.concord.fileprovider",
+        file
+    )
+}
+
+private fun File.getMimeType(): String {
+    val fileExtension = MimeTypeMap.getFileExtensionFromUrl(Uri.encode(path))
+    return MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension) ?: "*/*"
 }
