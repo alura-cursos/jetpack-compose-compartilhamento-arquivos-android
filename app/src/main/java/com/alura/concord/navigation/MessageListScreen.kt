@@ -1,6 +1,10 @@
 package com.alura.concord.navigation
 
 import android.Manifest
+import android.content.Intent
+import android.os.Build
+import android.os.Environment
+import android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -9,7 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
@@ -26,13 +29,11 @@ import com.alura.concord.media.saveOnExternalStorage
 import com.alura.concord.media.saveOnInternalStorage
 import com.alura.concord.media.shareFile
 import com.alura.concord.media.verifyPermission
-import com.alura.concord.network.DownloadService.makeDownloadByURL
 import com.alura.concord.ui.chat.MessageListViewModel
 import com.alura.concord.ui.chat.MessageScreen
 import com.alura.concord.ui.components.ModalBottomSheetFile
 import com.alura.concord.ui.components.ModalBottomShareSheet
 import com.alura.concord.ui.components.ModalBottomSheetSticker
-import kotlinx.coroutines.launch
 
 internal const val messageChatRoute = "messages"
 internal const val messageChatIdArgument = "chatId"
@@ -196,6 +197,19 @@ fun NavGraphBuilder.messageListScreen(
                 }
             )
 
+            val requestExternalPermission = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.StartActivityForResult(),
+                onResult = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        if (Environment.isExternalStorageManager()) {
+                            val mediaToOpen = uiState.selectedMessage.mediaLink
+                            context.saveOnExternalStorage(mediaToOpen)
+                        }
+                    }
+                }
+            )
+
+
             if (uiState.showBottomShareSheet) {
                 val mediaToOpen = uiState.selectedMessage.mediaLink
 
@@ -207,10 +221,27 @@ fun NavGraphBuilder.messageListScreen(
                         context.shareFile(mediaToOpen)
                     },
                     onSave = {
-                        if (context.verifyPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                            requestWritePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        } else {
+
+                        val writePermissionInsGranted =
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                Environment.isExternalStorageManager()
+                            } else {
+                                !context.verifyPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            }
+
+                        if (writePermissionInsGranted) {
                             context.saveOnExternalStorage(mediaToOpen)
+                        } else {
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                requestExternalPermission.launch(
+                                    Intent(
+                                        ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
+                                    )
+                                )
+                            } else {
+                                requestWritePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            }
                         }
                     },
                     onBack = {
