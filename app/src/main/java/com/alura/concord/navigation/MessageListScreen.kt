@@ -1,5 +1,6 @@
 package com.alura.concord.navigation
 
+import android.Manifest
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -185,6 +186,15 @@ fun NavGraphBuilder.messageListScreen(
                 )
             }
 
+            val requestWritePermission = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission(),
+                onResult = { isGranted ->
+                    if (isGranted) {
+                        val mediaToOpen = uiState.selectedMessage.mediaLink
+                        context.saveOnExternalStorage(mediaToOpen)
+                    }
+                }
+            )
 
             if (uiState.showBottomShareSheet) {
                 val mediaToOpen = uiState.selectedMessage.mediaLink
@@ -197,7 +207,11 @@ fun NavGraphBuilder.messageListScreen(
                         context.shareFile(mediaToOpen)
                     },
                     onSave = {
-                        context.saveOnExternalStorage(mediaToOpen)
+                        if (context.verifyPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                            requestWritePermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        } else {
+                            context.saveOnExternalStorage(mediaToOpen)
+                        }
                     },
                     onBack = {
                         viewModelMessage.setShowBottomShareSheet(false)
