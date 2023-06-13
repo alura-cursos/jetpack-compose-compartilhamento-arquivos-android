@@ -3,11 +3,9 @@ package com.alura.concord.network
 import android.accounts.NetworkErrorException
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okio.use
 import java.io.FileNotFoundException
 import java.io.InputStream
 import java.net.UnknownHostException

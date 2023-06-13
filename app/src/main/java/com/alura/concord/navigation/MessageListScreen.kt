@@ -1,11 +1,6 @@
 package com.alura.concord.navigation
 
-import android.Manifest
-import android.content.Intent
 import android.net.Uri
-import android.os.Build
-import android.os.Environment
-import android.provider.Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -32,8 +27,8 @@ import com.alura.concord.media.shareFile
 import com.alura.concord.media.verifyPermission
 import com.alura.concord.ui.chat.MessageListViewModel
 import com.alura.concord.ui.chat.MessageScreen
-import com.alura.concord.ui.components.ModalBottomSheetFile
 import com.alura.concord.ui.components.ModalBottomShareSheet
+import com.alura.concord.ui.components.ModalBottomSheetFile
 import com.alura.concord.ui.components.ModalBottomSheetSticker
 import java.io.File
 
@@ -195,7 +190,15 @@ fun NavGraphBuilder.messageListScreen(
                 onResult = {
                     it?.let { uri: Uri ->
                         val mediaToOpen = uiState.selectedMessage.mediaLink
-                        context.saveOnExternalStorage(mediaToOpen, uri)
+                        context.saveOnExternalStorage(
+                            mediaToOpen, uri,
+                            onSuccess = {
+                                context.showMessage("Arquivo salvo")
+                            },
+                            onFailure = {
+                                context.showMessage("Falha ao salvar arquivo")
+                            }
+                        )
                     }
                 }
             )

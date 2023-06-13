@@ -3,9 +3,9 @@ package com.alura.concord.media
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Environment
 import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
+import androidx.documentfile.provider.DocumentFile
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import okio.use
@@ -34,7 +34,8 @@ suspend fun Context.saveOnInternalStorage(
     onSuccess: (String) -> Unit,
     onFailure: () -> Unit
 ) {
-    val path = getExternalFilesDir("temp")
+    val folderName = "temp"
+    val path = getExternalFilesDir(folderName)
     val newFile = File(path, fileName)
 
     withContext(IO) {
@@ -85,14 +86,23 @@ fun Context.shareFile(mediaLink: String) {
 
 fun Context.saveOnExternalStorage(
     mediaLink: String,
-    destinationUri: Uri
+    destinationUri: Uri,
+    onSuccess: () -> Unit,
+    onFailure: () -> Unit
 ) {
     val sourceFile = File(mediaLink)
 
-    contentResolver.openOutputStream(destinationUri)?.use { outputStream ->
-        sourceFile.inputStream().use { inpuStream ->
-            inpuStream.copyTo(outputStream)
+    try {
+        contentResolver.openOutputStream(destinationUri)?.use { outputStream ->
+            sourceFile.inputStream().use { inpuStream ->
+                inpuStream.copyTo(outputStream)
+            }
         }
+        onSuccess()
+    } catch (e: Exception) {
+        val newFile = DocumentFile.fromSingleUri(this, destinationUri)
+        newFile?.delete()
+        onFailure()
     }
 
 }
