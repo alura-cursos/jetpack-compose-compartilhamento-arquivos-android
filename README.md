@@ -22,7 +22,7 @@ https://github.com/alura-cursos/jetpack-compose-compartilhamento-arquivos-androi
 Para simular um aplicativo de troca de mensagens, o Concord, oferece as seguintes telas:
 
 - `Aba inicial`: Exibie uma lista contatos fictícia, cada contato pode ser clicado para abrir o histórico de conversas.
-- `Converas (Chat)`: Mostra o histórico de mensagens trocadas, como nosso app não está conectado a uma Web API, é possível apenas fazer o envio delas no momento.
+- `Conversas (Chat)`: Mostra o histórico de mensagens trocadas, como nosso app não está conectado a uma Web API, é possível apenas fazer o envio delas no momento.
 - `Figurinhas (Sticker List)`: Usa o componente [ModalBottomSheet][modalbottomsheet-link] para exibir uma lista de imagens do armazenamento específico ou compartilhado.
 - `Seletor de fotos (Photo Picker)`: Usa a UI nativa do Android para exibir imagens salvas no dispositivo.
 - `Seletor de arquivos (File Picker)`: Usa a UI nativa do Android para exibir todos arquivos salvos no dispositivo.
