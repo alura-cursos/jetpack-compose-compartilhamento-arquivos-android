@@ -62,7 +62,7 @@ Após baixar o projeto, você pode abri-lo com o Android Studio. Para isso, na t
 
 
 ## 📚 Mais informações do curso
-Gostou do conteúdo e quer saber mais detalhes? Então [confira o curso na página da Alura](https://www.alura.com.br/curso-online-jetpack-compose-baixando-e-compartilhando-arquivos-android) 😉
+Gostou do conteúdo e quer saber mais detalhes? Então [confira o curso na página da Alura](https://www.alura.com.br/curso-online-jepack-compose-baixando-compartilhando-arquivos-android) 😉
 
 
 [modalbottomsheet-link]: https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#ModalBottomSheet(kotlin.Function0,androidx.compose.ui.Modifier,androidx.compose.material3.SheetState,androidx.compose.ui.graphics.Shape,androidx.compose.ui.graphics.Color,androidx.compose.ui.graphics.Color,androidx.compose.ui.unit.Dp,androidx.compose.ui.graphics.Color,kotlin.Function0,kotlin.Function1)
